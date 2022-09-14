@@ -1,0 +1,36 @@
+#include <expression/ArithmeticExpression.hpp>
+#include <expression/LogicalExpression.hpp>
+#include <expression/ConstantExpression.hpp>
+#include <expression/CallExpression.hpp>
+#include <expression/Scalar.hpp>
+#include <expression/SingletonInstance.hpp>
+#include <expression/VectorInstance.hpp>
+
+#include <expression/VarInstance.hpp>
+
+std::string GenFixExtendedLogicalExpression(LogicalExpression*);
+std::string GenFixExtendedAssignment(int, VarInstance*, Expression*);
+std::string GenFixExtendedCallExpression(int, VarInstance*, CallExpression*);
+std::string GenFixExtendedArithmeticExpression(int, VarInstance*, ArithmeticExpression*);
+
+std::string GenFixExtendedScalar(int, VarInstance*, Scalar*);
+std::string GenFixExtendedSingletonInstance(int, VarInstance*, SingletonInstance*);
+std::string GenFixExtendedVectorInstance(int, VarInstance*, VectorInstance*);
+
+std::string GenFixExtendedAbs(int, VarInstance*, CallExpression*);
+std::string GenFixExtendedSqrt(int, VarInstance*, CallExpression*);
+std::string GenFixExtendedSin(int, VarInstance*, CallExpression*);
+std::string GenFixExtendedCos(int, VarInstance*, CallExpression*);
+std::string GenFixExtendedAtan(int, VarInstance*, CallExpression*);
+
+std::string GenFixExtendedOpComment(std::string, int, int, int, int, int, int, int, int, int);
+
+std::string GenFixExtendedAddAlign(int, std::string, int, std::string, int, int, int);
+std::string GenFixExtendedSubAlign(int, std::string, int, std::string, int, int, int);
+std::string GenFixExtendedMulAlign(int, std::string, int, std::string, int, int, int);
+std::string GenFixExtendedDivAlign(int, std::string, int, std::string, int, int, int);
+
+std::string GenFixExtendedAdd(int, VarInstance*, ConstantExpression*, ArithmeticExpression*, ConstantExpression*);
+std::string GenFixExtendedSub(int, VarInstance*, ConstantExpression*, ArithmeticExpression*, ConstantExpression*);
+std::string GenFixExtendedMul(int, VarInstance*, ConstantExpression*, ArithmeticExpression*, ConstantExpression*);
+std::string GenFixExtendedDiv(int, VarInstance*, ConstantExpression*, ArithmeticExpression*, ConstantExpression*);

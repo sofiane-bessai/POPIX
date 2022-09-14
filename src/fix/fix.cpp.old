@@ -1,0 +1,427 @@
+#include <fix/fix.hpp>
+
+std::string GenFixExtendedAssignment(int depth, VarInstance *var, Expression *expression) {
+	if(ArithmeticExpression *arithmetic = dynamic_cast <ArithmeticExpression*> (expression); arithmetic != nullptr)
+		return GenFixExtendedArithmeticExpression(depth, var, arithmetic);
+	else if(CallExpression *call = dynamic_cast <CallExpression*> (expression); call != nullptr)
+		return GenFixExtendedCallExpression(depth, var, call);
+	else if(SingletonInstance *singleton = dynamic_cast <SingletonInstance*> (expression); singleton != nullptr)
+		return GenFixExtendedSingletonInstance(depth, var, singleton);
+	else if(VectorInstance *vector = dynamic_cast <VectorInstance*> (expression); vector != nullptr)
+		return GenFixExtendedVectorInstance(depth, var, vector);
+	else if(Scalar *scalar = dynamic_cast <Scalar*> (expression); scalar != nullptr)
+		return GenFixExtendedScalar(depth, var, scalar);
+	else
+		return std::string(depth, '\t') + "Assignment" + ";\n";
+}
+
+std::string GenFixExtendedCallExpression(int depth, VarInstance *var, CallExpression *call) {
+	std::string result;
+
+	switch (call->GetCallType()) {
+	case CallExpression::CallExpressionType::ABS:
+		result = GenFixExtendedAbs(depth, var, call);
+		break;
+
+	case CallExpression::CallExpressionType::SQRT:
+		result = GenFixExtendedSqrt(depth, var, call);
+		break;
+
+	case CallExpression::CallExpressionType::SIN:
+		result = GenFixExtendedSin(depth, var, call);
+		break;
+
+	case CallExpression::CallExpressionType::COS:
+		result = GenFixExtendedCos(depth, var, call);
+		break;
+
+	case CallExpression::CallExpressionType::ATAN:
+		result = GenFixExtendedAtan(depth, var, call);
+		break;
+	
+	default:
+		result = std::string(depth, '\t') + "CallExpression" + ";\n";
+		break;
+	}
+
+	return result;
+}
+
+std::string GenFixExtendedArithmeticExpression(int depth, VarInstance *var, ArithmeticExpression *expression) {
+	std::string result;
+	ConstantExpression *operand1 = (ConstantExpression *) expression->GetOperand1();
+	ConstantExpression *operand2 = (ConstantExpression *) expression->GetOperand2();
+
+	switch (expression->GetOp()) {
+	case ArithmeticExpression::Operation::PLUS:
+		result = GenFixExtendedAdd(depth, var, operand1, expression, operand2);
+		break;
+
+	case ArithmeticExpression::Operation::MINUS:
+		result = GenFixExtendedSub(depth, var, operand1, expression, operand2);
+		break;
+
+	case ArithmeticExpression::Operation::TIMES:
+		result = GenFixExtendedMul(depth, var, operand1, expression, operand2);
+		break;
+
+	case ArithmeticExpression::Operation::DIVIDE:
+		result = GenFixExtendedDiv(depth, var, operand1, expression, operand2);
+		break;
+	
+	default:
+		result = std::string(depth, '\t') + "ArithmeticExpression" + ";\n";
+		break;
+	}
+
+	return result + '\n';
+}
+
+/*
+
+*/
+
+std::string GenFixExtendedSingletonInstance(int depth, VarInstance *var, SingletonInstance *singleton) {
+	return std::string(depth, '\t') + var->ToStringFixExtended(0) + " = " + singleton->ToStringFixExtended(0) + ";\n";
+}
+std::string GenFixExtendedVectorInstance(int depth, VarInstance *var, VectorInstance *vector) {
+	return std::string(depth, '\t') + var->ToStringFixExtended(0) + " = " + vector->ToStringFixExtended(0) + ";\n";
+}
+std::string GenFixExtendedScalar(int depth, VarInstance *var, Scalar *scalar) {
+	return std::string(depth, '\t') + var->ToStringFixExtended(0) + " = " + scalar->ToStringFixExtended(0) + ";\n";
+}
+
+/*
+
+*/
+
+std::string GenFixExtendedAbs(int depth, VarInstance *var, CallExpression *call) {
+	return std::string(depth, '\t') + call->ToStringFloat(0);
+}
+
+std::string GenFixExtendedSqrt(int depth, VarInstance *var, CallExpression *call) {
+	std::string code;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin CallExpression::SQRT */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End CallExpression::SQRT */" + "\n";
+
+	ConstantExpression * arg =  (ConstantExpression *) call->GetArg();
+	std::string arg_id = arg->ToStringFloat(0);
+	int arg_length = arg->GetLength(); 
+
+	code = std::string(depth+1, '\t') + "/* inline sqrt function */\n";
+
+	return begin_comment + code + end_comment;
+}
+
+std::string GenFixExtendedSin(int depth, VarInstance *var, CallExpression *call) {
+	std::string op1, op2, op3, op4, op5;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin CallExpression::SIN */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End CallExpression::SIN */" + "\n";
+
+	ConstantExpression * arg =  (ConstantExpression *) call->GetArg();
+	std::string arg_id = arg->ToStringFloat(0);
+	int arg_ufp = arg->GetUfp();
+	int arg_ulp = arg->GetUlp();
+	int arg_length = arg->GetLength();
+	int frac_len = 2 * arg_ufp + 2 * arg_ulp;
+
+	int res_ulp = 0;
+
+	std::string op = (frac_len <= res_ulp) ? " << " : " >> ";
+	std::string offset = std::to_string(abs(-res_ulp + frac_len));
+
+	// OP1 (x * x)
+	op1 = 	std::string(depth, '\t') + "// (x * x)" + '\n' +
+			// std::string(depth, '\t') + "int ufp_mul = __EQUATION__;" + '\n' +
+			// std::string(depth, '\t') + "int ulp_mul = __EQUATION__;" + '\n' +
+			// std::string(depth, '\t') + "int length_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "__reg1__ = (int32_t) (" + arg_id + " * " + arg_id + ");" + '\n' +
+			std::string(depth, '\t') + "__reg1__ = __reg1__ " + op + offset + ';' + '\n' +
+			'\n';
+
+	// OP2 6 --> fix
+	op2 = 	std::string(depth, '\t') + "// 6 --> fix" + '\n' +
+			std::string(depth, '\t') + "__reg2__ = 12;" + '\n' +
+			'\n';
+
+	// OP3 (x * x) / 6
+	op3 = 	std::string(depth, '\t') + "// (x * x) / 6" + '\n' +
+			std::string(depth, '\t') + "int ufp_div = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int ulp_div = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int length_div = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "__reg1__ = (__CONDITION__) ? __reg1__ << __NUMBER__ : __reg1__ >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "__reg2__ = (__CONDITION__) ? __reg2__ << __NUMBER__ : __reg2__ >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "div_tmp = (int) (__reg1__ * ( 1 << __NUMBER__ ) ) / __reg2__;" + '\n' +
+			'\n';
+
+	// OP4 1 - ((x * x) / 6)
+	op4 = 	std::string(depth, '\t') + "// 1 - ((x * x) / 6)" + '\n' +
+			std::string(depth, '\t') + "int ufp_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int ulp_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int length_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "__NAME__ = (__CONDITION__) ? __NAME__ << __NUMBER__ : __NAME__ >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "div_tmp = (__CONDITION__) ? div_tmp << __NUMBER__ : div_tmp >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "sub_tmp = 1 - div_tmp;" + '\n' +
+			'\n';
+
+	// OP5 x * (1 - ((x * x) / 6))
+	op5 = 	std::string(depth, '\t') + "// x * (1 - ((x * x) / 6))" + '\n' +
+			std::string(depth, '\t') + "ufp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "ulp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "length_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (int32_t) (x * sub_tmp);" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (__CONDITION__) ? mul_tmp << __NUMBER__ : mul_tmp >> __NUMBER__;" + '\n';
+
+	return begin_comment + op1 + op2 + op3 + op4 + op5 + end_comment;
+}
+
+std::string GenFixExtendedCos(int depth, VarInstance *var, CallExpression *call) {
+	std::string op1, op2, op3, op4;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin CallExpression::COS */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End CallExpression::COS */" + "\n";
+
+	// OP1 (x * x)
+	op1 = 	std::string(depth, '\t') + "// (x * x)"  + '\n' + 
+			std::string(depth, '\t') + "int ufp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int ulp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int length_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (int32_t) (x * x);" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (__CONDITION__) ? mul_tmp << __NUMBER__ : mul_tmp >> __NUMBER__;" + '\n' +
+			'\n';
+
+	// OP2 (x * x) * (1 / 4)
+	op2 = 	std::string(depth, '\t') + "// (x * x) * (1 / 4)"  + '\n' + 
+			std::string(depth, '\t') + "ufp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "ulp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "length_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (int32_t) ( mul_tmp * 1 );" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (__CONDITION__) ? mul_tmp << __NUMBER__ : mul_tmp >> __NUMBER__;" + '\n' +
+			'\n';
+
+	// OP3 1 --> fix
+	op3 = 	std::string(depth, '\t') + "// 1 --> fix"  + '\n' + 
+			std::string(depth, '\t') + "__NAME__ = __NUMBER__;" + '\n' +
+			'\n';
+
+	// OP4 1 - ((x * x) * (1 / 4))
+	op4 = 	std::string(depth, '\t') + "// 1 - ((x * x) * (1 / 4))"  + '\n' + 
+			std::string(depth, '\t') + "int ufp_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int ulp_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int length_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "__NAME__ = (__CONDITION__) ? __NAME__ << __NUMBER__ : __NAME__ >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (__CONDITION__) ? mul_tmp << __NUMBER__ : mul_tmp >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "sub_tmp = 1 - mul_tmp;" + '\n';
+
+	return begin_comment + op1 + op2 + op3 + op4 + end_comment;
+}
+
+std::string GenFixExtendedAtan(int depth, VarInstance *var, CallExpression *call) {
+	std::string op1, op2, op3, op4;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin CallExpression::ATAN */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End CallExpression::ATAN */" + "\n";
+
+	// OP1 (x * x)
+	op1 = 	std::string(depth, '\t') + "// (x * x)"  + '\n' + 
+			std::string(depth, '\t') + "int ufp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int ulp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int length_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (int32_t) (x * x);" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (__CONDITION__) ? mul_tmp << __NUMBER__ : mul_tmp >> __NUMBER__;" + '\n' +
+			'\n';
+
+	// OP2 x / 3
+	op2 = 	std::string(depth, '\t') + "// x / 3"  + '\n' + 
+			std::string(depth, '\t') + "int ufp_div = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int ulp_div = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int length_div = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "x = (__CONDITION__) ? x << __NUMBER__ : x >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "__NAME__ = (__CONDITION__) ? __NAME__ << __NUMBER__ : __NAME__ >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "div_tmp = (int) (x * ( 1 << __NUMBER__ ) ) / 12;" + '\n' +
+			'\n';
+
+	// OP3 ( x * x ) * ( x / 3 )
+	op3 = 	std::string(depth, '\t') + "// ( x * x ) * ( x / 3 )"  + '\n' + 
+			std::string(depth, '\t') + "ufp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "ulp_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "length_mul = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (int32_t) (mul_tmp * div_tmp);" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (__CONDITION__) ? mul_tmp << __NUMBER__ : mul_tmp >> __NUMBER__;" + '\n' +
+			'\n';
+
+	// OP4 x - (( x * x * x ) / 3)
+	op4 = 	std::string(depth, '\t') + "// x - (( x * x * x ) / 3)"  + '\n' + 
+			std::string(depth, '\t') + "int ufp_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int ulp_sub = __EQUATION__;" + '\n' +
+			std::string(depth, '\t') + "int length_sub = __EQUATION__;" + '\n'+
+			std::string(depth, '\t') + "x = (__CONDITION__) ? x << __NUMBER__ : x >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "mul_tmp = (__CONDITION__) ? mul_tmp << __NUMBER__ : mul_tmp >> __NUMBER__;" + '\n' +
+			std::string(depth, '\t') + "sub_tmp = x - mul_tmp;" + '\n';
+
+	return begin_comment + op1 + op2 + op3 + op4 + end_comment;
+}
+
+/*
+
+*/
+
+std::string GenFixExtendedOpComment(std::string op, int res_ufp, int res_ulp, int res_length, int op1_ufp, int op1_ulp, int op1_length, int op2_ufp, int op2_ulp, int op2_length) {
+	return 	" // <" + std::to_string(res_ufp) + ',' + std::to_string(res_ulp) + ',' + std::to_string(res_length) + "> = " +
+			'<' + std::to_string(op1_ufp) + ',' + std::to_string(op1_ulp) + ',' + std::to_string(op1_length) + '>' + 
+			op +
+			'<' + std::to_string(op2_ufp) + ',' + std::to_string(op2_ulp) + ',' + std::to_string(op2_length) + '>';
+}
+
+std::string GenFixExtendedAdd(int depth, VarInstance *var, ConstantExpression *operand1, ArithmeticExpression *expression, ConstantExpression *operand2) {
+	std::string align_op1, align_op2, op;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin ArithmeticExpression::ADD */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End ArithmeticExpression::ADD */" + "\n";
+
+	std::string res_id = var->ToStringFloat(0);
+	std::string op1_id = operand1->ToStringFloat(0);
+	std::string op2_id = operand2->ToStringFloat(0);
+
+	int res_ufp = var->GetUfp();
+	int op1_ufp = operand1->GetUfp();
+	int op2_ufp = operand2->GetUfp();
+
+	int res_ulp = var->GetUlp();
+	int op1_ulp = operand1->GetUlp();
+	int op2_ulp = operand2->GetUlp();
+
+	int res_length = var->GetLength();
+	int op1_length = operand1->GetLength();
+	int op2_length = operand2->GetLength();
+
+	align_op1 = GenFixExtendedAddAlign(depth, "__reg1__", res_ulp, op1_id, op1_ufp, op1_ulp, op1_length);
+	align_op2 = GenFixExtendedAddAlign(depth, "__reg2__", res_ulp, op2_id, op2_ufp, op2_ulp, op2_length);
+	op = std::string(depth, '\t') + var->ToStringFloat(0) + " = " + "__reg1__ + __reg2__" + ";\n";
+
+	return begin_comment + align_op1 + align_op2 + op + end_comment;
+}
+
+std::string GenFixExtendedSub(int depth, VarInstance *var, ConstantExpression *operand1, ArithmeticExpression *expression, ConstantExpression *operand2) {
+	std::string align_op1, align_op2, op;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin ArithmeticExpression::SUB */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End ArithmeticExpression::SUB */" + "\n";
+
+	std::string res_id = var->ToStringFloat(0);
+	std::string op1_id = operand1->ToStringFloat(0);
+	std::string op2_id = operand2->ToStringFloat(0);
+
+	int res_ufp = var->GetUfp();
+	int op1_ufp = operand1->GetUfp();
+	int op2_ufp = operand2->GetUfp();
+
+	int res_ulp = var->GetUlp();
+	int op1_ulp = operand1->GetUlp();
+	int op2_ulp = operand2->GetUlp();
+
+	int res_length = var->GetLength();
+	int op1_length = operand1->GetLength();
+	int op2_length = operand2->GetLength();
+
+	align_op1 = GenFixExtendedSubAlign(depth, "__reg1__", res_ulp, op1_id, op1_ufp, op1_ulp, op1_length);
+	align_op2 = GenFixExtendedSubAlign(depth, "__reg2__", res_ulp, op2_id, op2_ufp, op2_ulp, op2_length);
+	op = std::string(depth, '\t') + var->ToStringFloat(0) + " = " + "__reg1__ - __reg2__" + ";\n";
+	
+	return begin_comment + align_op1 + align_op2 + op + end_comment;
+}
+
+std::string GenFixExtendedMul(int depth, VarInstance *var, ConstantExpression *operand1, ArithmeticExpression *expression, ConstantExpression *operand2) {
+	std::string op, align_res, affect;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin ArithmeticExpression::MUL */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End ArithmeticExpression::MUL */" + "\n";
+
+	std::string res_id = var->ToStringFloat(0);
+	std::string op1_id = operand1->ToStringFloat(0);
+	std::string op2_id = operand2->ToStringFloat(0);
+
+	int res_ufp = var->GetUfp();
+	int op1_ufp = operand1->GetUfp();
+	int op2_ufp = operand2->GetUfp();
+
+	int res_ulp = var->GetUlp();
+	int op1_ulp = operand1->GetUlp();
+	int op2_ulp = operand2->GetUlp();
+
+	int res_length = var->GetLength();
+	int op1_length = operand1->GetLength();
+	int op2_length = operand2->GetLength();
+
+	int frac_len = op1_ulp + op2_ulp;
+
+	if(op1_length + op2_length < 31) {
+		op = std::string(depth, '\t') + "__reg1__ = (int32_t) (" + op1_id + " * " + op2_id + ");" + GenFixExtendedOpComment(" * ", res_ufp, res_length, res_length, op1_ufp, op1_ulp, op1_length, op2_ufp, op2_ulp, op2_length) + '\n';
+		align_res = GenFixExtendedMulAlign(depth, "__reg1__", res_ulp, "__reg1__", op1_ufp, frac_len, op1_length);
+		affect = std::string(depth, '\t') + var->ToStringFloat(0) + " = (int32_t) __reg1__;\n";
+	}
+	else {
+		g_LogConsole->write(LogLevel::WARNING, "overflow on multiplication");
+	}
+	
+	return begin_comment + op + align_res + affect + end_comment;
+}
+
+std::string GenFixExtendedDiv(int depth, VarInstance *var, ConstantExpression *operand1, ArithmeticExpression *expression, ConstantExpression *operand2) {
+	std::string align_op1, align_op2, op;
+	std::string begin_comment = std::string(depth, '\t') + "/* Begin ArithmeticExpression::DIV */" + "\n";
+	std::string end_comment = std::string(depth, '\t') + "/* End ArithmeticExpression::DIV */" + "\n";
+
+	std::string res_id = var->ToStringFloat(0);
+	std::string op1_id = operand1->ToStringFloat(0);
+	std::string op2_id = operand2->ToStringFloat(0);
+
+	int res_ufp = var->GetUfp();
+	int op1_ufp = operand1->GetUfp();
+	int op2_ufp = operand2->GetUfp();
+
+	int res_ulp = var->GetUlp();
+	int op1_ulp = operand1->GetUlp();
+	int op2_ulp = operand2->GetUlp();
+
+	int res_length = var->GetLength();
+	int op1_length = operand1->GetLength();
+	int op2_length = operand2->GetLength();
+
+	align_op1 = GenFixExtendedDivAlign(depth, "__reg1__", res_ulp, op1_id, op1_ufp, op1_ulp, op1_length);
+	align_op2 = GenFixExtendedDivAlign(depth, "__reg2__", res_ulp, op2_id, op2_ufp, op2_ulp, op2_length);
+	op = std::string(depth, '\t') + var->ToStringFloat(0) + " = (int) ( __reg1__ * ( 1 << " + std::to_string(res_ulp) + " ) ) / __reg2__" + ";\n";
+
+	return begin_comment + align_op1 + align_op2 + op + end_comment;
+}
+
+/*
+
+*/
+
+std::string GenFixExtendedAddAlign(int depth, std::string res_id, int res_ulp, std::string operand_id, int operand_ufp, int operand_ulp, int operand_length) {
+	std::string op = (operand_ulp < res_ulp) ? " << " : " >> ";
+	std::string offset = std::to_string(abs(-res_ulp + operand_ulp));
+
+	std::string comment = " // (" + std::to_string(operand_ulp) + op + offset + ") -> " + std::to_string(res_ulp);
+
+	return std::string(depth, '\t') + res_id + " = " + operand_id + op + offset + ';' + comment + '\n';
+}
+
+std::string GenFixExtendedSubAlign(int depth, std::string res_id, int res_ulp, std::string operand_id, int operand_ufp, int operand_ulp, int operand_length) {
+	return GenFixExtendedAddAlign(depth, res_id, res_ulp, operand_id, operand_ufp, operand_ulp, operand_length);
+}
+
+std::string GenFixExtendedMulAlign(int depth, std::string res_id, int res_ulp, std::string operand_id, int operand_ufp, int frac_len, int operand_length) {
+	std::string op = (frac_len <= res_ulp) ? " << " : " >> ";
+	std::string offset = std::to_string(abs(-res_ulp + frac_len));
+	std::string comment = " // (" + std::to_string(frac_len) + op + offset + ") -> " + std::to_string(res_ulp);
+	return std::string(depth, '\t') + res_id + " = " + operand_id + op + offset + ';' + comment + '\n';
+}
+
+std::string GenFixExtendedDivAlign(int depth, std::string res_id, int res_ulp, std::string operand_id, int operand_ufp, int operand_ulp, int operand_length) {
+	return GenFixExtendedAddAlign(depth, res_id, res_ulp, operand_id, operand_ufp, operand_ulp, operand_length);
+}
+
+/*
+
+*/
+
+std::string GenFixExtendedLogicalExpression(LogicalExpression *expression) {
+	return "GenFixExtendedLogicalExpression";
+}

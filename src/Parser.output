@@ -1,0 +1,1043 @@
+Grammaire
+
+    0 $accept: Program $end
+
+    1 Program: statement_list
+
+    2 statement_list: statement_list statement
+    3               | statement
+
+    4 statement: loop_statement
+    5          | cond_statement
+    6          | assignment
+    7          | CREATE_ARRAY '(' IDENTIFIER ',' INTEGER ')' precision ';'
+    8          | REQUIRE_ACCURACY '(' IDENTIFIER ',' INTEGER ')' precision ';'
+    9          | ';'
+
+   10 assignment: identifier '=' add_expression ';'
+
+   11 loop_statement: WHILE '(' bool_expression ')' '{' statement_list '}'
+
+   12 cond_statement: IF '(' bool_expression ')' '{' statement_list '}'
+   13               | IF '(' bool_expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+   14 bool_expression: add_expression
+   15                | bool_expression CONDITIONNAL_OP add_expression
+
+   16 add_expression: mul_expression
+   17               | add_expression '+' precision mul_expression
+   18               | add_expression '-' precision mul_expression
+
+   19 mul_expression: primary_expression
+   20               | mul_expression '*' precision primary_expression
+   21               | mul_expression '/' precision primary_expression
+
+   22 primary_expression: '(' bool_expression ')'
+   23                   | identifier
+   24                   | INTEGER precision
+   25                   | FLOAT precision
+   26                   | IDENTIFIER '(' add_expression ')' precision
+
+   27 precision: '|' INTEGER '|'
+   28          | '|' INTEGER ',' INTEGER '|'
+   29          | ε
+
+   30 identifier: IDENTIFIER precision
+   31           | IDENTIFIER '[' add_expression ']' precision
+
+
+Terminaux, suivis des règles où ils apparaissent
+
+    $end (0) 0
+    '(' (40) 7 8 11 12 13 22 26
+    ')' (41) 7 8 11 12 13 22 26
+    '*' (42) 20
+    '+' (43) 17
+    ',' (44) 7 8 28
+    '-' (45) 18
+    '/' (47) 21
+    ';' (59) 7 8 9 10
+    '=' (61) 10
+    '[' (91) 31
+    ']' (93) 31
+    '{' (123) 11 12 13
+    '|' (124) 27 28
+    '}' (125) 11 12 13
+    error (256)
+    IDENTIFIER <string> (258) 7 8 26 30 31
+    INTEGER <integer> (259) 7 8 24 27 28
+    FLOAT <real> (260) 25
+    WHILE (261) 11
+    IF (262) 12 13
+    ELSE (263) 13
+    REQUIRE_ACCURACY (264) 8
+    CREATE_ARRAY (265) 7
+    CONDITIONNAL_OP <boolOperator> (266) 15
+
+
+Non-terminaux, suivis des règles où ils apparaissent
+
+    $accept (26)
+        à gauche: 0
+    Program (27)
+        à gauche: 1
+        à droite: 0
+    statement_list <statementList> (28)
+        à gauche: 2 3
+        à droite: 1 2 11 12 13
+    statement <statement> (29)
+        à gauche: 4 5 6 7 8 9
+        à droite: 2 3
+    assignment <statement> (30)
+        à gauche: 10
+        à droite: 6
+    loop_statement <statement> (31)
+        à gauche: 11
+        à droite: 4
+    cond_statement <statement> (32)
+        à gauche: 12 13
+        à droite: 5
+    bool_expression <expression> (33)
+        à gauche: 14 15
+        à droite: 11 12 13 15 22
+    add_expression <expression> (34)
+        à gauche: 16 17 18
+        à droite: 10 14 15 17 18 26 31
+    mul_expression <expression> (35)
+        à gauche: 19 20 21
+        à droite: 16 17 18 20 21
+    primary_expression <expression> (36)
+        à gauche: 22 23 24 25 26
+        à droite: 19 20 21
+    precision <precision> (37)
+        à gauche: 27 28 29
+        à droite: 7 8 17 18 20 21 24 25 26 30 31
+    identifier <variable> (38)
+        à gauche: 30 31
+        à droite: 10 23
+
+
+État 0
+
+    0 $accept: • Program $end
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    ';'               décalage et aller à l'état 6
+
+    Program         aller à l'état 7
+    statement_list  aller à l'état 8
+    statement       aller à l'état 9
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 1
+
+   30 identifier: IDENTIFIER • precision
+   31           | IDENTIFIER • '[' add_expression ']' precision
+
+    '['  décalage et aller à l'état 14
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 16
+
+
+État 2
+
+   11 loop_statement: WHILE • '(' bool_expression ')' '{' statement_list '}'
+
+    '('  décalage et aller à l'état 17
+
+
+État 3
+
+   12 cond_statement: IF • '(' bool_expression ')' '{' statement_list '}'
+   13               | IF • '(' bool_expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    '('  décalage et aller à l'état 18
+
+
+État 4
+
+    8 statement: REQUIRE_ACCURACY • '(' IDENTIFIER ',' INTEGER ')' precision ';'
+
+    '('  décalage et aller à l'état 19
+
+
+État 5
+
+    7 statement: CREATE_ARRAY • '(' IDENTIFIER ',' INTEGER ')' precision ';'
+
+    '('  décalage et aller à l'état 20
+
+
+État 6
+
+    9 statement: ';' •
+
+    $défaut  réduction par utilisation de la règle 9 (statement)
+
+
+État 7
+
+    0 $accept: Program • $end
+
+    $end  décalage et aller à l'état 21
+
+
+État 8
+
+    1 Program: statement_list •
+    2 statement_list: statement_list • statement
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    ';'               décalage et aller à l'état 6
+
+    $défaut  réduction par utilisation de la règle 1 (Program)
+
+    statement       aller à l'état 22
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 9
+
+    3 statement_list: statement •
+
+    $défaut  réduction par utilisation de la règle 3 (statement_list)
+
+
+État 10
+
+    6 statement: assignment •
+
+    $défaut  réduction par utilisation de la règle 6 (statement)
+
+
+État 11
+
+    4 statement: loop_statement •
+
+    $défaut  réduction par utilisation de la règle 4 (statement)
+
+
+État 12
+
+    5 statement: cond_statement •
+
+    $défaut  réduction par utilisation de la règle 5 (statement)
+
+
+État 13
+
+   10 assignment: identifier • '=' add_expression ';'
+
+    '='  décalage et aller à l'état 23
+
+
+État 14
+
+   31 identifier: IDENTIFIER '[' • add_expression ']' precision
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    add_expression      aller à l'état 28
+    mul_expression      aller à l'état 29
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 15
+
+   27 precision: '|' • INTEGER '|'
+   28          | '|' • INTEGER ',' INTEGER '|'
+
+    INTEGER  décalage et aller à l'état 32
+
+
+État 16
+
+   30 identifier: IDENTIFIER precision •
+
+    $défaut  réduction par utilisation de la règle 30 (identifier)
+
+
+État 17
+
+   11 loop_statement: WHILE '(' • bool_expression ')' '{' statement_list '}'
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    bool_expression     aller à l'état 33
+    add_expression      aller à l'état 34
+    mul_expression      aller à l'état 29
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 18
+
+   12 cond_statement: IF '(' • bool_expression ')' '{' statement_list '}'
+   13               | IF '(' • bool_expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    bool_expression     aller à l'état 35
+    add_expression      aller à l'état 34
+    mul_expression      aller à l'état 29
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 19
+
+    8 statement: REQUIRE_ACCURACY '(' • IDENTIFIER ',' INTEGER ')' precision ';'
+
+    IDENTIFIER  décalage et aller à l'état 36
+
+
+État 20
+
+    7 statement: CREATE_ARRAY '(' • IDENTIFIER ',' INTEGER ')' precision ';'
+
+    IDENTIFIER  décalage et aller à l'état 37
+
+
+État 21
+
+    0 $accept: Program $end •
+
+    $défaut  accepter
+
+
+État 22
+
+    2 statement_list: statement_list statement •
+
+    $défaut  réduction par utilisation de la règle 2 (statement_list)
+
+
+État 23
+
+   10 assignment: identifier '=' • add_expression ';'
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    add_expression      aller à l'état 38
+    mul_expression      aller à l'état 29
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 24
+
+   26 primary_expression: IDENTIFIER • '(' add_expression ')' precision
+   30 identifier: IDENTIFIER • precision
+   31           | IDENTIFIER • '[' add_expression ']' precision
+
+    '['  décalage et aller à l'état 14
+    '('  décalage et aller à l'état 39
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 16
+
+
+État 25
+
+   24 primary_expression: INTEGER • precision
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 40
+
+
+État 26
+
+   25 primary_expression: FLOAT • precision
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 41
+
+
+État 27
+
+   22 primary_expression: '(' • bool_expression ')'
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    bool_expression     aller à l'état 42
+    add_expression      aller à l'état 34
+    mul_expression      aller à l'état 29
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 28
+
+   17 add_expression: add_expression • '+' precision mul_expression
+   18               | add_expression • '-' precision mul_expression
+   31 identifier: IDENTIFIER '[' add_expression • ']' precision
+
+    '+'  décalage et aller à l'état 43
+    '-'  décalage et aller à l'état 44
+    ']'  décalage et aller à l'état 45
+
+
+État 29
+
+   16 add_expression: mul_expression •
+   20 mul_expression: mul_expression • '*' precision primary_expression
+   21               | mul_expression • '/' precision primary_expression
+
+    '*'  décalage et aller à l'état 46
+    '/'  décalage et aller à l'état 47
+
+    $défaut  réduction par utilisation de la règle 16 (add_expression)
+
+
+État 30
+
+   19 mul_expression: primary_expression •
+
+    $défaut  réduction par utilisation de la règle 19 (mul_expression)
+
+
+État 31
+
+   23 primary_expression: identifier •
+
+    $défaut  réduction par utilisation de la règle 23 (primary_expression)
+
+
+État 32
+
+   27 precision: '|' INTEGER • '|'
+   28          | '|' INTEGER • ',' INTEGER '|'
+
+    '|'  décalage et aller à l'état 48
+    ','  décalage et aller à l'état 49
+
+
+État 33
+
+   11 loop_statement: WHILE '(' bool_expression • ')' '{' statement_list '}'
+   15 bool_expression: bool_expression • CONDITIONNAL_OP add_expression
+
+    CONDITIONNAL_OP  décalage et aller à l'état 50
+    ')'              décalage et aller à l'état 51
+
+
+État 34
+
+   14 bool_expression: add_expression •
+   17 add_expression: add_expression • '+' precision mul_expression
+   18               | add_expression • '-' precision mul_expression
+
+    '+'  décalage et aller à l'état 43
+    '-'  décalage et aller à l'état 44
+
+    $défaut  réduction par utilisation de la règle 14 (bool_expression)
+
+
+État 35
+
+   12 cond_statement: IF '(' bool_expression • ')' '{' statement_list '}'
+   13               | IF '(' bool_expression • ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   15 bool_expression: bool_expression • CONDITIONNAL_OP add_expression
+
+    CONDITIONNAL_OP  décalage et aller à l'état 50
+    ')'              décalage et aller à l'état 52
+
+
+État 36
+
+    8 statement: REQUIRE_ACCURACY '(' IDENTIFIER • ',' INTEGER ')' precision ';'
+
+    ','  décalage et aller à l'état 53
+
+
+État 37
+
+    7 statement: CREATE_ARRAY '(' IDENTIFIER • ',' INTEGER ')' precision ';'
+
+    ','  décalage et aller à l'état 54
+
+
+État 38
+
+   10 assignment: identifier '=' add_expression • ';'
+   17 add_expression: add_expression • '+' precision mul_expression
+   18               | add_expression • '-' precision mul_expression
+
+    '+'  décalage et aller à l'état 43
+    '-'  décalage et aller à l'état 44
+    ';'  décalage et aller à l'état 55
+
+
+État 39
+
+   26 primary_expression: IDENTIFIER '(' • add_expression ')' precision
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    add_expression      aller à l'état 56
+    mul_expression      aller à l'état 29
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 40
+
+   24 primary_expression: INTEGER precision •
+
+    $défaut  réduction par utilisation de la règle 24 (primary_expression)
+
+
+État 41
+
+   25 primary_expression: FLOAT precision •
+
+    $défaut  réduction par utilisation de la règle 25 (primary_expression)
+
+
+État 42
+
+   15 bool_expression: bool_expression • CONDITIONNAL_OP add_expression
+   22 primary_expression: '(' bool_expression • ')'
+
+    CONDITIONNAL_OP  décalage et aller à l'état 50
+    ')'              décalage et aller à l'état 57
+
+
+État 43
+
+   17 add_expression: add_expression '+' • precision mul_expression
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 58
+
+
+État 44
+
+   18 add_expression: add_expression '-' • precision mul_expression
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 59
+
+
+État 45
+
+   31 identifier: IDENTIFIER '[' add_expression ']' • precision
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 60
+
+
+État 46
+
+   20 mul_expression: mul_expression '*' • precision primary_expression
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 61
+
+
+État 47
+
+   21 mul_expression: mul_expression '/' • precision primary_expression
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 62
+
+
+État 48
+
+   27 precision: '|' INTEGER '|' •
+
+    $défaut  réduction par utilisation de la règle 27 (precision)
+
+
+État 49
+
+   28 precision: '|' INTEGER ',' • INTEGER '|'
+
+    INTEGER  décalage et aller à l'état 63
+
+
+État 50
+
+   15 bool_expression: bool_expression CONDITIONNAL_OP • add_expression
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    add_expression      aller à l'état 64
+    mul_expression      aller à l'état 29
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 51
+
+   11 loop_statement: WHILE '(' bool_expression ')' • '{' statement_list '}'
+
+    '{'  décalage et aller à l'état 65
+
+
+État 52
+
+   12 cond_statement: IF '(' bool_expression ')' • '{' statement_list '}'
+   13               | IF '(' bool_expression ')' • '{' statement_list '}' ELSE '{' statement_list '}'
+
+    '{'  décalage et aller à l'état 66
+
+
+État 53
+
+    8 statement: REQUIRE_ACCURACY '(' IDENTIFIER ',' • INTEGER ')' precision ';'
+
+    INTEGER  décalage et aller à l'état 67
+
+
+État 54
+
+    7 statement: CREATE_ARRAY '(' IDENTIFIER ',' • INTEGER ')' precision ';'
+
+    INTEGER  décalage et aller à l'état 68
+
+
+État 55
+
+   10 assignment: identifier '=' add_expression ';' •
+
+    $défaut  réduction par utilisation de la règle 10 (assignment)
+
+
+État 56
+
+   17 add_expression: add_expression • '+' precision mul_expression
+   18               | add_expression • '-' precision mul_expression
+   26 primary_expression: IDENTIFIER '(' add_expression • ')' precision
+
+    '+'  décalage et aller à l'état 43
+    '-'  décalage et aller à l'état 44
+    ')'  décalage et aller à l'état 69
+
+
+État 57
+
+   22 primary_expression: '(' bool_expression ')' •
+
+    $défaut  réduction par utilisation de la règle 22 (primary_expression)
+
+
+État 58
+
+   17 add_expression: add_expression '+' precision • mul_expression
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    mul_expression      aller à l'état 70
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 59
+
+   18 add_expression: add_expression '-' precision • mul_expression
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    mul_expression      aller à l'état 71
+    primary_expression  aller à l'état 30
+    identifier          aller à l'état 31
+
+
+État 60
+
+   31 identifier: IDENTIFIER '[' add_expression ']' precision •
+
+    $défaut  réduction par utilisation de la règle 31 (identifier)
+
+
+État 61
+
+   20 mul_expression: mul_expression '*' precision • primary_expression
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    primary_expression  aller à l'état 72
+    identifier          aller à l'état 31
+
+
+État 62
+
+   21 mul_expression: mul_expression '/' precision • primary_expression
+
+    IDENTIFIER  décalage et aller à l'état 24
+    INTEGER     décalage et aller à l'état 25
+    FLOAT       décalage et aller à l'état 26
+    '('         décalage et aller à l'état 27
+
+    primary_expression  aller à l'état 73
+    identifier          aller à l'état 31
+
+
+État 63
+
+   28 precision: '|' INTEGER ',' INTEGER • '|'
+
+    '|'  décalage et aller à l'état 74
+
+
+État 64
+
+   15 bool_expression: bool_expression CONDITIONNAL_OP add_expression •
+   17 add_expression: add_expression • '+' precision mul_expression
+   18               | add_expression • '-' precision mul_expression
+
+    '+'  décalage et aller à l'état 43
+    '-'  décalage et aller à l'état 44
+
+    $défaut  réduction par utilisation de la règle 15 (bool_expression)
+
+
+État 65
+
+   11 loop_statement: WHILE '(' bool_expression ')' '{' • statement_list '}'
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    ';'               décalage et aller à l'état 6
+
+    statement_list  aller à l'état 75
+    statement       aller à l'état 9
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 66
+
+   12 cond_statement: IF '(' bool_expression ')' '{' • statement_list '}'
+   13               | IF '(' bool_expression ')' '{' • statement_list '}' ELSE '{' statement_list '}'
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    ';'               décalage et aller à l'état 6
+
+    statement_list  aller à l'état 76
+    statement       aller à l'état 9
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 67
+
+    8 statement: REQUIRE_ACCURACY '(' IDENTIFIER ',' INTEGER • ')' precision ';'
+
+    ')'  décalage et aller à l'état 77
+
+
+État 68
+
+    7 statement: CREATE_ARRAY '(' IDENTIFIER ',' INTEGER • ')' precision ';'
+
+    ')'  décalage et aller à l'état 78
+
+
+État 69
+
+   26 primary_expression: IDENTIFIER '(' add_expression ')' • precision
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 79
+
+
+État 70
+
+   17 add_expression: add_expression '+' precision mul_expression •
+   20 mul_expression: mul_expression • '*' precision primary_expression
+   21               | mul_expression • '/' precision primary_expression
+
+    '*'  décalage et aller à l'état 46
+    '/'  décalage et aller à l'état 47
+
+    $défaut  réduction par utilisation de la règle 17 (add_expression)
+
+
+État 71
+
+   18 add_expression: add_expression '-' precision mul_expression •
+   20 mul_expression: mul_expression • '*' precision primary_expression
+   21               | mul_expression • '/' precision primary_expression
+
+    '*'  décalage et aller à l'état 46
+    '/'  décalage et aller à l'état 47
+
+    $défaut  réduction par utilisation de la règle 18 (add_expression)
+
+
+État 72
+
+   20 mul_expression: mul_expression '*' precision primary_expression •
+
+    $défaut  réduction par utilisation de la règle 20 (mul_expression)
+
+
+État 73
+
+   21 mul_expression: mul_expression '/' precision primary_expression •
+
+    $défaut  réduction par utilisation de la règle 21 (mul_expression)
+
+
+État 74
+
+   28 precision: '|' INTEGER ',' INTEGER '|' •
+
+    $défaut  réduction par utilisation de la règle 28 (precision)
+
+
+État 75
+
+    2 statement_list: statement_list • statement
+   11 loop_statement: WHILE '(' bool_expression ')' '{' statement_list • '}'
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    '}'               décalage et aller à l'état 80
+    ';'               décalage et aller à l'état 6
+
+    statement       aller à l'état 22
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 76
+
+    2 statement_list: statement_list • statement
+   12 cond_statement: IF '(' bool_expression ')' '{' statement_list • '}'
+   13               | IF '(' bool_expression ')' '{' statement_list • '}' ELSE '{' statement_list '}'
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    '}'               décalage et aller à l'état 81
+    ';'               décalage et aller à l'état 6
+
+    statement       aller à l'état 22
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 77
+
+    8 statement: REQUIRE_ACCURACY '(' IDENTIFIER ',' INTEGER ')' • precision ';'
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 82
+
+
+État 78
+
+    7 statement: CREATE_ARRAY '(' IDENTIFIER ',' INTEGER ')' • precision ';'
+
+    '|'  décalage et aller à l'état 15
+
+    $défaut  réduction par utilisation de la règle 29 (precision)
+
+    precision  aller à l'état 83
+
+
+État 79
+
+   26 primary_expression: IDENTIFIER '(' add_expression ')' precision •
+
+    $défaut  réduction par utilisation de la règle 26 (primary_expression)
+
+
+État 80
+
+   11 loop_statement: WHILE '(' bool_expression ')' '{' statement_list '}' •
+
+    $défaut  réduction par utilisation de la règle 11 (loop_statement)
+
+
+État 81
+
+   12 cond_statement: IF '(' bool_expression ')' '{' statement_list '}' •
+   13               | IF '(' bool_expression ')' '{' statement_list '}' • ELSE '{' statement_list '}'
+
+    ELSE  décalage et aller à l'état 84
+
+    $défaut  réduction par utilisation de la règle 12 (cond_statement)
+
+
+État 82
+
+    8 statement: REQUIRE_ACCURACY '(' IDENTIFIER ',' INTEGER ')' precision • ';'
+
+    ';'  décalage et aller à l'état 85
+
+
+État 83
+
+    7 statement: CREATE_ARRAY '(' IDENTIFIER ',' INTEGER ')' precision • ';'
+
+    ';'  décalage et aller à l'état 86
+
+
+État 84
+
+   13 cond_statement: IF '(' bool_expression ')' '{' statement_list '}' ELSE • '{' statement_list '}'
+
+    '{'  décalage et aller à l'état 87
+
+
+État 85
+
+    8 statement: REQUIRE_ACCURACY '(' IDENTIFIER ',' INTEGER ')' precision ';' •
+
+    $défaut  réduction par utilisation de la règle 8 (statement)
+
+
+État 86
+
+    7 statement: CREATE_ARRAY '(' IDENTIFIER ',' INTEGER ')' precision ';' •
+
+    $défaut  réduction par utilisation de la règle 7 (statement)
+
+
+État 87
+
+   13 cond_statement: IF '(' bool_expression ')' '{' statement_list '}' ELSE '{' • statement_list '}'
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    ';'               décalage et aller à l'état 6
+
+    statement_list  aller à l'état 88
+    statement       aller à l'état 9
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 88
+
+    2 statement_list: statement_list • statement
+   13 cond_statement: IF '(' bool_expression ')' '{' statement_list '}' ELSE '{' statement_list • '}'
+
+    IDENTIFIER        décalage et aller à l'état 1
+    WHILE             décalage et aller à l'état 2
+    IF                décalage et aller à l'état 3
+    REQUIRE_ACCURACY  décalage et aller à l'état 4
+    CREATE_ARRAY      décalage et aller à l'état 5
+    '}'               décalage et aller à l'état 89
+    ';'               décalage et aller à l'état 6
+
+    statement       aller à l'état 22
+    assignment      aller à l'état 10
+    loop_statement  aller à l'état 11
+    cond_statement  aller à l'état 12
+    identifier      aller à l'état 13
+
+
+État 89
+
+   13 cond_statement: IF '(' bool_expression ')' '{' statement_list '}' ELSE '{' statement_list '}' •
+
+    $défaut  réduction par utilisation de la règle 13 (cond_statement)
