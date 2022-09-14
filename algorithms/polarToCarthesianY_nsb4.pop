@@ -1,0 +1,8 @@
+ radius|4| = 4.0|2,4|;
+ theta|13| = 249.0|7,13|;
+ pi|13| = 3.1415927|1,13|;
+ tmp_fix_1|13| = pi|1,13| /|-6,13|180.0|7,13|;
+ radiant|13| = theta|7,13| *|2,13| tmp_fix_1|-6,13|;
+ tmp_fix_1|4| = sin(radiant|2,13|)|-1,4|;
+ res|4| = radius|2,4| *|1,4| tmp_fix_1|-1,4|;
+ require_accuracy(res,4);
