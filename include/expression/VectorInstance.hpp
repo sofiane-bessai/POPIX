@@ -102,13 +102,6 @@ class VectorInstance : public VarInstance {
 		 * 
 		 * @return std::string 
 		 */
-		virtual std::string ToStringFix(int);
-		
-		/**
-		 * @brief 
-		 * 
-		 * @return std::string 
-		 */
 		virtual std::string ToStringFixExtended(int);
 
 	private:

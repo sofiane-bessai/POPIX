@@ -1,13 +1,9 @@
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
 
 int main() {
-	clock_t begin_dtime = clock();
-	clock_t end_dtime;
-	double exec_time;
 	float res;
 	float tmp_fix_6;
 	float tmp_fix_5;
@@ -45,10 +41,6 @@ int main() {
 	tmp_fix_6 = tmp_fix_1 / tmp_fix_5;
 	res = atan(tmp_fix_6);
 	printf("%lf\n", res);
-	end_dtime = clock();
-	exec_time = (double) (end_dtime - begin_dtime) / CLOCKS_PER_SEC;
-	exec_time = exec_time * 1000;
-	printf("%.3lf\n", exec_time);
 
 	return 0;
 }

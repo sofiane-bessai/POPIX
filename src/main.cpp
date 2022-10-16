@@ -89,13 +89,6 @@ int main(int argc, char** argv) {
 	g_Compiler->GenerateOutput(outputFileFloat);
 	outputFileFloat.close();
 
-	// FIX
-	g_LogConsole->write(LogLevel::DEBUG, "FIX file generating... ");
-	outputFileFix.open(filePathFix, std::ofstream::out);
-	g_Compiler->SetGenerationType(GenerationType::FIX);
-	g_Compiler->GenerateOutput(outputFileFix);
-	outputFileFix.close();	
-
 	// FIX EXTENDED
 	g_LogConsole->write(LogLevel::DEBUG, "FIX_EXTENDED file generating... ");
 	outputFileFixExtended.open(filePathFixExtended, std::ofstream::out);

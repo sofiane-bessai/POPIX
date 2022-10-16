@@ -48,16 +48,6 @@ std::string WhileLoopStatement::ToStringFloat(int depth) {
 	return Indent(depth) + "while(" + conditionString + ") {\n" + bodyString + Indent(depth) + "}\n";
 }
 
-std::string WhileLoopStatement::ToStringFix(int depth) {
-	std::string conditionString;
-	std::string bodyString;
-
-	conditionString = m_condition->ToStringFix(0);
-	bodyString = m_loopBody->ToStringFix(depth+1);
-
-	return Indent(depth) + "while(" + conditionString + ") {\n" + bodyString + Indent(depth) + "}\n";
-}
-
 std::string WhileLoopStatement::ToStringFixExtended(int depth) {
 	std::string conditionString;
 	std::string bodyString;

@@ -48,7 +48,7 @@ OBJ_FILES = $(patsubst ./src/%.cpp, ./obj/%.o, $(SRC_FILES))
 ################################## GLOBALE RULES #####################################
 ######################################################################################
 
-all : bison flex $(EXECUTABLE)
+all : create_obj_dir bison flex $(EXECUTABLE)
 
 bison : ./flexbison/parser.y
 	@bison $(BISON_FLAGS) $< --output=./$(SRC_DIR)/Parser.cpp --defines=./$(INCLUDE_DIR)/Parser.hpp
@@ -66,7 +66,7 @@ $(EXECUTABLE) : $(GEN_OBJ_FILES) $(OBJ_FILES)
 ./obj/%.o : ./src/%.cpp ./include/%.hpp $(ABSTRACT_CLASS_HEADERS)
 	@$(CC) $(CFLAGS) -o $@ -c $<
 
-.PHONY: lib flex bison
+.PHONY: lib flex bison create_obj_dir
 
 ######################################################################################
 ################################## VARIOUS RULES #####################################
@@ -83,5 +83,12 @@ print-% :
 test:
 	@echo ""
 	@make -C data all
+
+create_obj_dir:
+	@mkdir -p obj
+	@mkdir -p obj/declaration
+	@mkdir -p obj/expression
+	@mkdir -p obj/fix
+	@mkdir -p obj/statement
 
 .PHONY: clean test

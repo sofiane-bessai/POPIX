@@ -79,18 +79,6 @@ std::string StatementList::ToStringFloat(int depth) {
 	return statementListString;
 }
 
-std::string StatementList::ToStringFix(int depth) {
-	std::string statementListString = "";
-	std::string statementString;
-
-	for(const auto &statement : m_statements) {
-		statementString = statement->ToStringFix(depth);
-		statementListString += statementString;
-	}
-
-	return statementListString;
-}
-
 std::string StatementList::ToStringFixExtended(int depth) {
 	std::string statementListString = "";
 	std::string statementString;

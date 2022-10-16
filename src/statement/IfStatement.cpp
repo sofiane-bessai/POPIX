@@ -76,21 +76,6 @@ std::string IfStatement::ToStringFloat(int depth) {
 	return conditionString + ifBodyString + elseBodyString;
 }
 
-std::string IfStatement::ToStringFix(int depth) {
-	std::string conditionString;
-	std::string ifBodyString;
-	std::string elseBodyString;
-
-	conditionString = Indent(depth) + "if(" + m_condition->ToStringFix(0) + ") {\n";
-	ifBodyString = m_ifBody->ToStringFix(depth+1) + Indent(depth) + "}\n";
-	if(m_elseBody != nullptr)
-		elseBodyString = Indent(depth) + "else {\n" + m_elseBody->ToStringFix(depth+1) + Indent(depth) + "}\n";
-	else
-		elseBodyString = "";
-
-	return conditionString + ifBodyString + elseBodyString;
-}
-
 std::string IfStatement::ToStringFixExtended(int depth) {
 	std::string conditionString;
 	std::string ifBodyString;

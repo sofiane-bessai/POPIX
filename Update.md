@@ -24,3 +24,7 @@
 
  - Add fixed-point library to execute internally the loaded code (bug proof ?)
  - 
+
+# BUG
+
+ - LAST_UFP is always set to the default value

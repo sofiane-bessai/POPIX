@@ -43,14 +43,6 @@ std::string RequireStatement::ToStringFloat(int depth) {
 	#endif
 }
 
-std::string RequireStatement::ToStringFix(int depth) {
-	#ifdef PRINT_RESULT
-		return Indent(depth) + "printf(\"\%lf\\n\", " + m_id + ");" + '\n';
-	#else
-		return "";
-	#endif
-}
-
 std::string RequireStatement::ToStringFixExtended(int depth) {
 	#ifdef PRINT_RESULT
 		return Indent(depth) + "printf(\"\%lf\\n\", " + m_id + ");" + '\n';

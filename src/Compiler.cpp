@@ -113,7 +113,6 @@ bool Compiler::GenerateOutput(std::ofstream &outputFile) {
 			break;
 		
 		case GenerationType::FLOAT :
-		case GenerationType::FIX :
 		case GenerationType::FIX_EXTENDED :
 			#ifdef DTIME_EXECUTION
 				outputFile << "#include <time.h>" << '\n';
@@ -150,7 +149,6 @@ bool Compiler::GenerateOutput(std::ofstream &outputFile) {
 void Compiler::GenerateHeader(std::ofstream &outputFile) {	
 	switch (m_generationLangage) {
 		case GenerationType::FLOAT :
-		case GenerationType::FIX :
 		case GenerationType::FIX_EXTENDED :
 			outputFile << "#include <stdio.h>" << '\n';
 			outputFile << "#include <stdlib.h>" << '\n';
@@ -177,10 +175,6 @@ void Compiler::GenerateBody(std::ofstream &outputFile) {
 			declarationListString = m_declarationList->ToStringFloat(1);
 			bodyString = m_program->ToStringFloat(1);
 			break;
-		case GenerationType::FIX :
-			declarationListString = m_declarationList->ToStringFix(1);
-			bodyString = m_program->ToStringFix(1);
-			break;
 		case GenerationType::FIX_EXTENDED :
 			outputFile << '\t' << "int32_t " << REGISTER_1 << ";" << '\n';
 			outputFile << '\t' << "int32_t " << REGISTER_2 << ";" << '\n';
@@ -199,7 +193,6 @@ void Compiler::GenerateBody(std::ofstream &outputFile) {
 void Compiler::GenerateFoot(std::ofstream &outputFile) {
 	switch (m_generationLangage) {
 		case GenerationType::FLOAT :
-		case GenerationType::FIX :
 		case GenerationType::FIX_EXTENDED :
 			outputFile << '\n';
 			outputFile << "\treturn 0;" << '\n';

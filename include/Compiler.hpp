@@ -3,8 +3,8 @@
 #include <statement/DeclarationList.hpp>
 #include <statement/StatementList.hpp>
 
-#define DTIME_EXECUTION
-#define PRINT_RESULT
+// #define DTIME_EXECUTION
+// #define PRINT_RESULT
 
 /**
  * @brief 
@@ -12,7 +12,6 @@
 enum class GenerationType {
 	POP,
 	FLOAT,
-	FIX,
 	FIX_EXTENDED,
 	VHDL,
 	UNDEFINED

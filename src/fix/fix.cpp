@@ -363,7 +363,7 @@ FIX Add(FIX x1, FIX x2, int result_ufp, int result_length) {
 /** @todo verify result.format.ulp */
 FIX Sub(FIX x1, FIX x2, int result_length) {
 	FIX result;
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	result.format.ufp = ufp_add_different_format(x1.format.ufp, x2.format.ufp);
 	result.format.ulp = ulp_add_different_format(result.format.ufp, result_length);
@@ -377,7 +377,7 @@ FIX Sub(FIX x1, FIX x2, int result_length) {
 
 FIX Sub(FIX x1, FIX x2, int result_ufp, int result_length) {
 	FIX result;
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	result.format.ufp = result_ufp;
 	result.format.ulp = ulp(result_ufp, result_length);
@@ -391,7 +391,7 @@ FIX Sub(FIX x1, FIX x2, int result_ufp, int result_length) {
 
 FIX Mul(FIX x1, FIX x2, int result_length) {
 	FIX result;
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	result.format.ufp = ufp_mult_different_format(x1.format.ufp, x1.format.ulp, x2.format.ufp, x2.format.ulp);
 	result.format.ulp = ulp_mult_different_format(result.format.ufp, result_length);
@@ -403,7 +403,7 @@ FIX Mul(FIX x1, FIX x2, int result_length) {
 
 FIX Mul(FIX x1, FIX x2, int result_ufp, int result_length) {
 	FIX result;
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	result.value = 0;
 	result.format.ufp = result_ufp;
@@ -415,7 +415,7 @@ FIX Mul(FIX x1, FIX x2, int result_ufp, int result_length) {
 
 FIX Div(FIX x1, FIX x2, int result_length) {
 	FIX result;
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	result.value = 0;
 	result.format.ufp = 0;
@@ -427,7 +427,7 @@ FIX Div(FIX x1, FIX x2, int result_length) {
 
 FIX Div(FIX x1, FIX x2, int result_ufp, int result_length) {
 	FIX result;
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	result.value = 0;
 	result.format.ufp = result_ufp;
@@ -545,7 +545,7 @@ std::string FPGen_Add(int depth, FIX x1, FIX x2, int result_ufp, int result_leng
 std::string FPGen_Add(int depth, int result_length, std::string result_name, std::string x1_name, std::string x2_name) {
 	std::string shift_op1, shift_op2, op, comment;
 
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	shift_op1 = std::string(depth, '\t') + "/* result_ufp calculation */" + '\n' +
 				std::string(depth, '\t') + "/* result_ulp calculation */" + '\n' +
@@ -586,7 +586,7 @@ std::string FPGen_Sub(int depth, FIX x1, FIX x2, int result_ufp, int result_leng
 std::string FPGen_Sub(int depth, int result_length, std::string result_name, std::string x1_name, std::string x2_name) {
 	std::string shift_op1, shift_op2, op, comment;
 
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 
 	shift_op1 = std::string(depth, '\t') + "/* result_ufp calculation */" + '\n' +
 				std::string(depth, '\t') + "/* result_ulp calculation */" + '\n' +
@@ -628,7 +628,7 @@ std::string FPGen_Mul(int depth, FIX x1, FIX x2, int result_ufp, int result_leng
 std::string FPGen_Mul(int depth, int result_length, std::string result_name, std::string x1_name, std::string x2_name) {
 	std::string op, shift, affect, comment;
 
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__); // LOG
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__); // LOG
 
 	// Op -> OK
 	op = std::string(depth, '\t') + REGISTER_1 + " = (int32_t) " + x1_name + " * " + x2_name + ';';
@@ -660,7 +660,7 @@ std::string FPGen_Mul(int depth, int result_length, std::string result_name, std
 std::string FPGen_Div(int depth, FIX x1, FIX x2, int result_ufp, int result_length, std::string result_name, std::string x1_name, std::string x2_name) {
 	std::string shift_op1, shift_op2, op, comment;
 
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 	
 	shift_op1 = FPGen_shift(depth, ulp(result_ufp, result_length), x1.format.ulp, REGISTER_1, x1_name);
 	shift_op2 = FPGen_shift(depth, ulp(result_ufp, result_length), x2.format.ulp, REGISTER_2, x2_name);
@@ -677,7 +677,7 @@ std::string FPGen_Div(int depth, FIX x1, FIX x2, int result_ufp, int result_leng
 std::string FPGen_Div(int depth, int result_length, std::string result_name, std::string x1_name, std::string x2_name) {
 	std::string shift_op1, shift_op2, op, comment;
 
-	g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
+	// g_LogConsole->write(LogLevel::ERROR, LogError::UNIMPLEMENTED, __FUNCTION__);
 	
 	shift_op1 = std::string(depth, '\t') + "/* result_ufp calculation */" + '\n' +
 				std::string(depth, '\t') + "/* result_ulp calculation */" + '\n' +

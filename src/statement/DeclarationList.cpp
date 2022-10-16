@@ -52,10 +52,10 @@ void DeclarationList::PrintVariables() {
 	int varSize;
 	int lastUfp;
 	std::string type;
-	g_LogConsole->write(LogLevel::INFO, "Ce programme contient " + std::to_string(m_variables.size()) + " variables");
-	g_LogConsole->write(LogLevel::INFO, "+------+--" + std::string(m_maxIdSize, '-') + "+-------------+---------------+---------------+");
-	g_LogConsole->write(LogLevel::INFO, "| TYPE | ID" + std::string(m_maxIdSize-2, ' ') + " | " + "SIZE" + "\t| " + "VAR_SIZE" + "\t| " + "LAST_UFP" + "\t|");
-	g_LogConsole->write(LogLevel::INFO, "+------+--" + std::string(m_maxIdSize, '-') + "+-------------+---------------+---------------+");
+	g_LogConsole->write(LogLevel::INFO, "This program contain " + std::to_string(m_variables.size()) + " variable(s)");
+	g_LogConsole->write(LogLevel::INFO, "+------+--" + std::string(m_maxIdSize, '-') + "+------+---------------+---------------+");
+	g_LogConsole->write(LogLevel::INFO, "| TYPE | ID" + std::string(m_maxIdSize-2, ' ') + " | " + "SIZE" + " | " + "VAR_SIZE" + "\t | " + "LAST_UFP" + "\t |");
+	g_LogConsole->write(LogLevel::INFO, "+------+--" + std::string(m_maxIdSize, '-') + "+------+---------------+---------------+");
 	for(const auto &var : m_variables) {
 		decl = var.second;
 		id = decl->GetId();
@@ -63,9 +63,9 @@ void DeclarationList::PrintVariables() {
 		varSize = decl->GetVarSize();
 		lastUfp = decl->GetLastUfp();
 		type = (decl->GetType() == DataType::REAL) ? "REAL" : "INT ";
-		g_LogConsole->write(LogLevel::INFO, "| " + type + " | " + id + std::string(m_maxIdSize-id.length(), ' ') + " | " + std::to_string(size) + "\t| " + std::to_string(varSize) + "\t\t| " + std::to_string(lastUfp) + "\t\t|");
+		g_LogConsole->write(LogLevel::INFO, "| " + type + " | " + id + std::string(m_maxIdSize-id.length(), ' ') + " | " + std::to_string(size) + "\t | " + std::to_string(varSize) + "\t\t | " + std::to_string(lastUfp) + "\t |");
 	}
-	g_LogConsole->write(LogLevel::INFO, "+------+--" + std::string(m_maxIdSize, '-') + "+-------------+---------------+---------------+");
+	g_LogConsole->write(LogLevel::INFO, "+------+--" + std::string(m_maxIdSize, '-') + "+------+---------------+---------------+");
 }
 
 /* Statement Methods */
