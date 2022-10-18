@@ -5,42 +5,25 @@
 
 int main() {
 	float res;
-	float tmp_fix_6;
 	float tmp_fix_5;
-	float s_lat1;
-	float lat1;
-	float lat2;
 	float tmp_fix_4;
-	float tmp_fix_1;
-	float c_lat1;
-	float tmp_fix_3;
-	float c_lat2;
-	float lon2;
-	float lon1;
-	float dLon;
-	float s_dLon;
-	float s_lat2;
-	float c_dLon;
 	float tmp_fix_2;
-	lat1 = 0.40000000;
-	lat2 = 0.75000000;
-	lon1 = 1;
-	lon2 = -0.10000000;
-	dLon = lon2 - lon1;
-	s_lat1 = sin(lat1);
-	c_lat1 = cos(lat1);
-	s_lat2 = sin(lat2);
-	c_lat2 = cos(lat2);
-	s_dLon = sin(dLon);
-	c_dLon = cos(dLon);
-	tmp_fix_1 = c_lat2 * s_dLon;
-	tmp_fix_2 = c_lat1 * s_lat2;
-	tmp_fix_3 = c_lat2 * s_lat1;
-	tmp_fix_4 = tmp_fix_3 * c_dLon;
-	tmp_fix_5 = tmp_fix_2 - tmp_fix_4;
-	tmp_fix_6 = tmp_fix_1 / tmp_fix_5;
-	res = atan(tmp_fix_6);
-	printf("%lf\n", res);
+	float tmp_fix_3;
+	float t1;
+	float tmp_fix_1;
+	float T;
+	float v;
+	float u;
+	u = 10;
+	v = 1000;
+	T = 20;
+	tmp_fix_1 = 0.60000000 * T;
+	t1 = 331.40000000 + tmp_fix_1;
+	tmp_fix_2 = -1 * t1;
+	tmp_fix_3 = t1 + u;
+	tmp_fix_4 = tmp_fix_2 * v;
+	tmp_fix_5 = tmp_fix_3 * tmp_fix_3;
+	res = tmp_fix_4 / tmp_fix_5;
 
 	return 0;
 }

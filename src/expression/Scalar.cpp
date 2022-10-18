@@ -85,7 +85,7 @@ std::string Scalar::ToStringFixExtended(int depth) {
 		int length = m_precision->GetLength();
 		int ulp = ( length == ufp ) ? 1 : length - abs(ufp);
 
-		// g_LogConsole->write(LogLevel::DEBUG, std::to_string(ufp) + ", " + std::to_string(ulp) + ", " + std::to_string(length));
+		g_LogConsole->write(LogLevel::DEBUG, std::to_string(ufp) + ", " + std::to_string(ulp) + ", " + std::to_string(length));
 
 		double value = ( this->m_value / ( pow(2, ( -ulp ) ) ) );
 		int valueFix = (int) round(value);

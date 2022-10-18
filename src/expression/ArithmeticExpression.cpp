@@ -71,6 +71,7 @@ std::string ArithmeticExpression::ToStringFloat(int depth) {
 	std::string leftExpressionString = m_leftExpression->ToStringFloat(0);
 	std::string opString;
 	std::string rightExpressionString = m_rightExpression->ToStringFloat(0);
+	
 	switch (this->m_op) {
 		case Operation::PLUS : opString = " + "; break;
 		case Operation::MINUS : opString = " - "; break;

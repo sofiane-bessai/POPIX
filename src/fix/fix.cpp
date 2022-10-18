@@ -131,8 +131,8 @@ std::string FPGen_ArithmeticExpression(int depth, VarInstance* var, ArithmeticEx
 	int result_length = expr->GetLength();
 
 	std::string result_name = var->ToStringFloat(0);
-	std::string operand1_name = operand1->ToStringFloat(0);
-	std::string operand2_name = operand2->ToStringFloat(0);
+	std::string operand1_name = operand1->ToStringFixExtended(0);
+	std::string operand2_name = operand2->ToStringFixExtended(0);
 
 	if(FPGen_is_ArithmeticExpression(operand1) || FPGen_is_ArithmeticExpression(operand2)) {
 		g_LogConsole->write(LogLevel::ERROR, LogError::COMPOSED_EXPRESSION, operand1->m_lineno, "FPGen_ArithmeticExpression");
@@ -142,7 +142,7 @@ std::string FPGen_ArithmeticExpression(int depth, VarInstance* var, ArithmeticEx
 
 	if(FPGen_is_CallExpression(operand1) || FPGen_is_CallExpression(operand2)) {
 		g_LogConsole->write(LogLevel::ERROR, LogError::COMPOSED_EXPRESSION, operand1->m_lineno, "FPGen_ArithmeticExpression");
-		result = std::string(depth, '\t') + "/* Can't handle function inside binary expr */" + '\n';
+		result = std::string(depth, '\t') + "/* Can't handle function inside binary expr (can only handle unary expression in this case) */" + '\n';
 		return result;
 	}
 
@@ -173,6 +173,7 @@ std::string FPGen_ArithmeticExpression(int depth, VarInstance* var, ArithmeticEx
 	
 	return result;
 }
+
 std::string FPGen_CallExpression(int depth, VarInstance * var, CallExpression * call) {
 	std::string result;
 
